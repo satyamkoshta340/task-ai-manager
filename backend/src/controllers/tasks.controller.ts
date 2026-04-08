@@ -74,6 +74,39 @@ export const getSummary = async (req: AuthRequest, res: Response): Promise<void>
     res.json({ briefing });
   } catch (error: any) {
     console.error('AI Summary Error:', error);
-    res.status(500).json({ error: error.message || 'Failed to generate AI briefing' });
+
+    if (error.code === 'CONFIG_ERROR') {
+      res.status(503).json({ error: 'Service Unavailable: AI briefing is not configured on the server.' });
+      return;
+    }
+
+    if (error.code === 'DB_ERROR') {
+      res.status(500).json({ error: 'Internal Server Error: Could not fetch tasks for briefing.' });
+      return;
+    }
+
+    if (error.code === 'API_ERROR') {
+      const msg = error.message.toLowerCase();
+      if (msg.includes('quota') || msg.includes('429') || msg.includes('rate limit')) {
+        res.status(429).json({ error: 'Too Many Requests: AI service rate limit exceeded. Please try again later.' });
+        return;
+      }
+      if (msg.includes('key') || msg.includes('auth') || msg.includes('401') || msg.includes('403')) {
+        res.status(502).json({ error: 'Bad Gateway: AI service configuration is invalid.' });
+        return;
+      }
+      if (msg.includes('503') || msg.includes('500') || msg.includes('server error') || msg.includes('overloaded')) {
+        res.status(503).json({ error: 'AI service is currently facing downtime or heavy traffic. Please try again later.' });
+        return;
+      }
+      if (msg.includes('timeout') || msg.includes('408') || msg.includes('504')) {
+        res.status(504).json({ error: 'Gateway Timeout: AI service took too long to respond.' });
+        return;
+      }
+      res.status(502).json({ error: 'Bad Gateway: AI service is temporarily unavailable. Please try again later.' });
+      return;
+    }
+
+    res.status(500).json({ error: 'An unexpected error occurred while generating the AI briefing.' });
   }
 };

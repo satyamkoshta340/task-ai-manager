@@ -45,7 +45,12 @@ export default function Dashboard() {
         const data = await res.json();
         setBriefing(data.briefing);
       } else {
-        setBriefing("Failed to generate AI briefing. Please check your backend logs.");
+        try {
+          const data = await res.json();
+          setBriefing(data.error || "Failed to generate AI briefing. Please check your backend logs.");
+        } catch {
+          setBriefing("Failed to generate AI briefing. Please check your backend logs.");
+        }
       }
     } catch (error) {
       console.error("Failed to fetch briefing", error);

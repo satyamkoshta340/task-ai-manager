@@ -3,10 +3,19 @@ import { getPendingTasks } from './tasks.service.js';
 
 export const generateDailyBriefing = async (userId: string) => {
   if (!process.env.GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY is missing in environment configuration.');
+    const err = new Error('GEMINI_API_KEY is missing in environment configuration.');
+    (err as any).code = 'CONFIG_ERROR';
+    throw err;
   }
 
-  const pendingTasks = await getPendingTasks(userId);
+  let pendingTasks;
+  try {
+    pendingTasks = await getPendingTasks(userId);
+  } catch (error) {
+    const err = new Error('Failed to fetch pending tasks from the database.');
+    (err as any).code = 'DB_ERROR';
+    throw err;
+  }
 
   if (pendingTasks.length === 0) {
     return "You have no pending tasks. Enjoy your day!";
@@ -21,10 +30,16 @@ export const generateDailyBriefing = async (userId: string) => {
     \n\nHere are my tasks:\n
     ${taskListText}`;
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-  });
-
-  return response.text;
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+    });
+    return response.text;
+  } catch (error: any) {
+    const err = new Error(error.message || 'Failed to communicate with AI service');
+    (err as any).code = 'API_ERROR';
+    (err as any).originalError = error;
+    throw err;
+  }
 };

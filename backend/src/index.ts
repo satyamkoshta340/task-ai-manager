@@ -16,7 +16,10 @@ app.use(morgan('dev'));
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
+import authRoutes from './routes/auth.routes.js';
 
+// ...
+app.use('/auth', authRoutes);
 app.use('/tasks', tasksRoutes);
 
 app.listen(port, () => {

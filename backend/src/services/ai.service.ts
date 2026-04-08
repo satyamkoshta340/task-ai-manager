@@ -1,12 +1,12 @@
 import { GoogleGenAI } from '@google/genai';
 import { getPendingTasks } from './tasks.service.js';
 
-export const generateDailyBriefing = async () => {
+export const generateDailyBriefing = async (userId: string) => {
   if (!process.env.GEMINI_API_KEY) {
     throw new Error('GEMINI_API_KEY is missing in environment configuration.');
   }
 
-  const pendingTasks = await getPendingTasks();
+  const pendingTasks = await getPendingTasks(userId);
 
   if (pendingTasks.length === 0) {
     return "You have no pending tasks. Enjoy your day!";

@@ -1,3 +1,4 @@
+import type { Task } from '@prisma/client';
 import { prisma } from '../config/db.js';
 
 export const createTask = async (title: string, description?: string) => {
@@ -25,5 +26,15 @@ export const getPendingTasks = async () => {
 export const deleteTaskById = async (id: string) => {
   return prisma.task.delete({
     where: { id },
+  });
+};
+
+// only update field that are sent  
+export const updateTaskById = async (id: string, data: Partial<Task>) => {
+  return prisma.task.update({
+    where: { id },
+    data: {
+      ...data,
+    },
   });
 };

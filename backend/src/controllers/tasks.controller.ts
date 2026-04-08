@@ -27,6 +27,22 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const updateTask = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+    const data = req.body;
+    if (!id) {
+      res.status(400).json({ error: 'ID is required' });
+      return;
+    }
+    const task = await tasksService.updateTaskById(id, data);
+    res.json(task);
+  } catch (error) {
+    console.error('Error updating task:', error);
+    res.status(500).json({ error: 'Failed to update task' });
+  }
+};
+
 export const deleteTask = async (req: Request, res: Response): Promise<void> => {
   try {
     const id = req.params.id as string;

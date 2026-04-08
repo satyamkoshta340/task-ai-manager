@@ -83,7 +83,7 @@ export function TaskList({ tasks, onToggle, onDelete, isLoading = false }: TaskL
 
           <button
             onClick={() => onDelete(task.id)}
-            className="opacity-0 group-hover:opacity-100 p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-all flex-shrink-0"
+            className="opacity-50 group-hover:opacity-100 p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-md transition-all flex-shrink-0"
             title="Delete Task"
           >
             <Trash2 className="w-4 h-4" />

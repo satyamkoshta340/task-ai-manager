@@ -3,9 +3,9 @@ import { createTask, getTasks, deleteTask, getSummary } from '../controllers/tas
 
 const router = Router();
 
-router.post('/tasks', createTask);
-router.get('/tasks', getTasks);
-router.get('/tasks/summary', getSummary);
-router.delete('/tasks/:id', deleteTask);
+router.post('/', createTask);
+router.get('/', getTasks);
+router.get('/summary', getSummary);
+router.delete('/:id', deleteTask);
 
 export default router;

@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import morgan from 'morgan';
 import tasksRoutes from './routes/tasks.routes.js';
 
 const app = express();
@@ -9,14 +10,10 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// Logger middleware for all incoming requests
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+// Use morgan for HTTP request logging
+app.use(morgan('dev'));
 
 app.get("/", (req, res) => {
-  console.log("helloe")
   res.send("Hello World");
 });
 

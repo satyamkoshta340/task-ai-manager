@@ -77,9 +77,21 @@ export default function Dashboard() {
     // Optimistic UI update
     setTasks(tasks.map(t => t.id === id ? { ...t, isCompleted } : t));
     
-    // Attempt backend update (if a PATCH route existed)
-    // NOTE: Current backend controller does not have a toggle endpoint yet.
-    // So this will revert on refresh unless implemented later!
+    try {
+      const res = await fetch(`${API_BASE}/tasks/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isCompleted }),
+      });
+      if (!res.ok) {
+        // Revert on failure
+        setTasks(tasks.map(t => t.id === id ? { ...t, isCompleted: !isCompleted } : t));
+      }
+    } catch (error) {
+      console.error("Failed to update task", error);
+      // Revert on failure
+      setTasks(tasks.map(t => t.id === id ? { ...t, isCompleted: !isCompleted } : t));
+    }
   };
 
   const handleDeleteTask = async (id: string) => {

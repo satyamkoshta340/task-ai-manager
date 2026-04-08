@@ -6,7 +6,7 @@ import { TaskInput } from "../components/TaskInput";
 import { TaskList, Task } from "../components/TaskList";
 import { AIBriefing } from "../components/AIBriefing";
 
-const API_BASE = "http://localhost:4000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL as string;
 
 export default function Dashboard() {
   const [tasks, setTasks] = useState<Task[]>([]);
